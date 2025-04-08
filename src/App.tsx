@@ -1,66 +1,102 @@
-import { useState, useEffect, use } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
-import { db, writeFirstPartInDB, writeDataInDB } from './db';
-import UserList from './UserList/UserList';
+import { useEffect, } from 'react';
+import './App.css';
+import { db, writeFirstPartInDB, writeDataInDB, getLastRecord } from './db';
+import UsersList from './UsersList/UsersList';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchUsers, } from './slices/usersSlice';
+import {
+	fetchUsers,
+	getUsersSliceInfoSelector,
+	getUsersSelector,
+} from './slices/usersSlice';
 import { AppDispatch } from './store/store';
+import UserCard from './UserCard/UserCard';
+import { TUser } from './types';
 
 function App() {
-  const [count, setCount] = useState(0);
-  const dispatch = useDispatch<AppDispatch>();
-
-  useEffect(() => {
-
-    async function initDB() {
-      try {
-        await writeFirstPartInDB();
-        console.log('Первые данные пользователей записаны в базу данных');
-      } catch (error) {
-        throw new Error(`Ошибка при записи данных в базу: ${error}`);
-      }
-    
-      try {
-        dispatch(fetchUsers({ countToDisplay: 200, currentPage: 0 }));
-      } catch (error) {
-        throw new Error(`Ошибка при выполнении fetchUsers: ${error}`);
-      }
-
-      writeDataInDB();
-    }
-    
-    initDB();
-
-  }, [dispatch]);
+	const dispatch = useDispatch<AppDispatch>();
+	const { loading, error, nulledDB } = useSelector(getUsersSliceInfoSelector);
+	const users: TUser[] = useSelector(getUsersSelector);
 
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-      <UserList />
-    </>
-  )
+	useEffect(() => {
+
+		const cancelToken = { cancelled: false };
+
+		if (nulledDB) {
+			console.log('Инициализация базы прекращена, т.к. nulledDB равен true');
+			cancelToken.cancelled = true;
+			return;
+		}
+
+		async function initDB() {
+
+			await db.open();
+			const countDB = await db.table('users').count();
+
+			try {
+				if (cancelToken.cancelled) return;
+				
+				if (countDB === 0) {
+					await writeFirstPartInDB();
+					if (cancelToken.cancelled) return;
+					console.log('Первые данные пользователей записаны в базу данных');
+
+					dispatch(fetchUsers({ countToDisplay: 100, currentPage: 0 }));
+					if (cancelToken.cancelled) return;
+
+					writeDataInDB();
+					if (cancelToken.cancelled) return;
+
+				} else {
+					dispatch(fetchUsers({ countToDisplay: 100, currentPage: 0 }));
+					if (cancelToken.cancelled) return;
+
+					const lastRecord = await getLastRecord();
+
+					if (countDB === lastRecord.userOrderNumber) {
+						const newStart = countDB - 1;
+						await writeDataInDB(newStart, 500000, cancelToken);
+						if (cancelToken.cancelled) return;
+
+					} else {
+						await writeFirstPartInDB();
+						if (cancelToken.cancelled) return;
+						await writeDataInDB();
+						if (cancelToken.cancelled) return;
+					}
+
+				}
+			} catch (error) {
+				throw new Error(`Ошибка при добавлении  пакета данных: ${error}`);
+			}
+		}
+
+		initDB();
+	}, [dispatch, nulledDB]);
+
+	return (
+		<>
+			<h1>Список пользователей</h1>
+			{loading || users.length === 0 ? (
+				<p>Загрузка данных...</p>
+			) : (
+				<div
+					style={{
+						height: '500px',
+						display: 'flex',
+						flexDirection: 'row',
+						gap: '20px',
+					}}
+				>
+					<UsersList />
+					<UserCard />
+				</div>
+			)}
+			{error && (
+				<p style={{ color: 'red' }}>Ошибка загрузки данных: {error}</p>
+			)}
+		</>
+	);
 }
 
-export default App
+export default App;
