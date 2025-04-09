@@ -35,12 +35,12 @@ const usersSlice = createSlice({
 	name: 'users',
 	initialState,
 	reducers: {
-		clearUsers(state) {
-			state = initialState;
+		clearUsers() {
+			return initialState;
 		},
 		setNulledDB(state) {
 			state.nulledDB = true;
-		}
+		},
 	},
 	selectors: {
 		getUsersSelector: (state) => state.users,
@@ -121,6 +121,6 @@ export const getUsersSliceInfoSelector = createSelector(
 		offset: usersState.offset,
 		countToDisplay: usersState.countToDisplay,
 		currentPage: usersState.currentPage,
-		nulledDB: usersState.nulledDB
+		nulledDB: usersState.nulledDB,
 	})
 );

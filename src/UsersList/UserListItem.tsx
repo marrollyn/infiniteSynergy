@@ -13,9 +13,12 @@ function UserListItem() {
 	const users: TUser[] = useSelector(getUsersSelector);
 	const { loading, ableData } = useSelector(getUsersSliceInfoSelector);
 
-	const handleUserButtonClick = useCallback((user: TUser) => {
-		dispatch(setUser(user));
-	}, [dispatch]);
+	const handleUserButtonClick = useCallback(
+		(user: TUser) => {
+			dispatch(setUser(user));
+		},
+		[dispatch]
+	);
 
 	return (
 		<div style={{ height: '100%', overflowY: 'auto' }}>

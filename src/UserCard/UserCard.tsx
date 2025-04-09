@@ -1,21 +1,14 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {
-	fetchUsers,
-	getUsersSelector,
-	getUsersSliceInfoSelector,
-} from '../slices/usersSlice';
-import {
-	updateUserDB,
-	getCurrentUsersState,
-} from '../slices/currentUserSlice';
+import { getUsersSliceInfoSelector } from '../slices/usersSlice';
+import { updateUserDB, getCurrentUsersState } from '../slices/currentUserSlice';
 import { AppDispatch } from '../store/store';
 import { TUser } from '../types';
 
 function UserCard() {
 	const dispatch = useDispatch<AppDispatch>();
 
-	const { currentUser, loading, error } = useSelector(getCurrentUsersState);
+	const { currentUser, error } = useSelector(getCurrentUsersState);
 	const { nulledDB } = useSelector(getUsersSliceInfoSelector);
 
 	const [editableUser, setEditableUser] = useState<TUser>({
@@ -44,13 +37,16 @@ function UserCard() {
 		}
 	}, [currentUser]);
 
-	const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-		const { name, value } = e.target;
-		setEditableUser((prev: TUser) => ({
-			...prev,
-			[name]: name === 'age' ? Number(value) : value,
-		}));
-	}, []);
+	const handleChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			const { name, value } = e.target;
+			setEditableUser((prev: TUser) => ({
+				...prev,
+				[name]: name === 'age' ? Number(value) : value,
+			}));
+		},
+		[]
+	);
 
 	const handleSave = useCallback(() => {
 		dispatch(updateUserDB(editableUser));

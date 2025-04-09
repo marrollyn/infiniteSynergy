@@ -1,49 +1,61 @@
-import React, { useCallback, useMemo, useState, useEffect } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-	setNulledDB,
 	fetchUsers,
 	getUsersSelector,
 	getUsersSliceInfoSelector,
 } from '../slices/usersSlice';
-import { clearCurrentUser } from '../slices/currentUserSlice';
 import { AppDispatch } from '../store/store';
 import { TUser } from '../types';
 import UserListItem from './UserListItem';
-import { db } from '../db';
 
 function UsersList() {
 	const dispatch = useDispatch<AppDispatch>();
 	const users: TUser[] = useSelector(getUsersSelector);
-	const { loading, ableData, offset, countToDisplay, currentPage, error, nulledDB } = useSelector(getUsersSliceInfoSelector);
+	const {
+		loading,
+		ableData,
+		offset,
+		countToDisplay,
+		currentPage,
+		error,
+		nulledDB,
+	} = useSelector(getUsersSliceInfoSelector);
 
 	const startList = useMemo(() => offset + 1, [offset]);
-	const endList = useMemo(() => offset + countToDisplay, [offset, countToDisplay]);
+	const endList = useMemo(
+		() => offset + countToDisplay,
+		[offset, countToDisplay]
+	);
 
 	const showPreviousRecords = useCallback(() => {
 		if (currentPage > 0) {
-			dispatch(fetchUsers({ countToDisplay, currentPage: currentPage - 1 }));
+			dispatch(
+				fetchUsers({ countToDisplay, currentPage: currentPage - 1 })
+			);
 		}
 	}, [currentPage, countToDisplay, dispatch]);
 
 	const showNextRecords = useCallback(() => {
 		if (ableData) {
-			dispatch(fetchUsers({ countToDisplay, currentPage: currentPage + 1 }));
+			dispatch(
+				fetchUsers({ countToDisplay, currentPage: currentPage + 1 })
+			);
 		}
 	}, [ableData, countToDisplay, currentPage, dispatch]);
 
-	const clearDB = useCallback(() => {
-		dispatch(setNulledDB());
-		dispatch(clearCurrentUser());
-		db.table('users')
-			.clear()
-			.then(() => {
-				console.log('База данных успешно очищена.');
-			})
-			.catch((error) => {
-				console.error('Ошибка при очистке базы данных:', error);
-			});
-	}, []);
+	// const clearDB = useCallback(() => {
+	// 	dispatch(setNulledDB());
+	// 	dispatch(clearCurrentUser());
+	// 	db.table('users')
+	// 		.clear()
+	// 		.then(() => {
+	// 			console.log('База данных успешно очищена.');
+	// 		})
+	// 		.catch((error) => {
+	// 			console.error('Ошибка при очистке базы данных:', error);
+	// 		});
+	// }, []);
 
 	return (
 		<div>
@@ -63,7 +75,7 @@ function UsersList() {
 					<button onClick={showNextRecords} disabled={!ableData}>
 						Следующие
 					</button>
-					<button onClick={clearDB}>Очистить DB</button>
+					{/* <button onClick={clearDB}>Очистить DB</button> */}
 					<p>
 						Показаны записи: {startList} - {endList}
 					</p>

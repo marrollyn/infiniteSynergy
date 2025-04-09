@@ -1,54 +1,71 @@
-# React + TypeScript + Vite
+# Test task for INFINITE SYNERGY
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Тестовое задание INFINITE SYNERGY, выполнено на React & TypeScript (Vite).
 
-Currently, two official plugins are available:
+## Содержание
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+1. [Установка и запуск](#Установка_и_запуск)
+2. [Сборка](#Сборка)
+3. [Описание](#Описание)
+4. [Использованные инструменты](#Использованные_инструменты)
+5. [Команды](#Команды)
+6. [Исполнитель](#Исполнитель)
 
-## Expanding the ESLint configuration
+## Установка и запуск<a name="Установка_и_запуск"></a>
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+Для установки и запуска необходимо выполнить команды:
 
-```js
-export default tseslint.config({
-	extends: [
-		// Remove ...tseslint.configs.recommended and replace with this
-		...tseslint.configs.recommendedTypeChecked,
-		// Alternatively, use this for stricter rules
-		...tseslint.configs.strictTypeChecked,
-		// Optionally, add this for stylistic rules
-		...tseslint.configs.stylisticTypeChecked,
-	],
-	languageOptions: {
-		// other options...
-		parserOptions: {
-			project: ['./tsconfig.node.json', './tsconfig.app.json'],
-			tsconfigRootDir: import.meta.dirname,
-		},
-	},
-});
+```
+npm install
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Сборка<a name="Сборка"></a>
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x';
-import reactDom from 'eslint-plugin-react-dom';
-
-export default tseslint.config({
-	plugins: {
-		// Add the react-x and react-dom plugins
-		'react-x': reactX,
-		'react-dom': reactDom,
-	},
-	rules: {
-		// other rules...
-		// Enable its recommended typescript rules
-		...reactX.configs['recommended-typescript'].rules,
-		...reactDom.configs.recommended.rules,
-	},
-});
 ```
+npm run build
+```
+
+## Описание<a name="Описание"></a>
+
+Проект представляет собой SPA с отображением списка пользователей, с возможностью выбора пользователя для редактирования его данных (имя, фамилия, возраст, адрес электронной почты).
+
+## Использованные инструменты<a name="Использованные_инструменты"></a>
+
+Приложение разработано с использованием следующих библиотек:
+
+- Redux Toolkit - для получения данных и формирования хранилища данных;
+- ESLint – для линтинга кода;
+- Prettier - для форматирования кода;
+
+## Команды<a name="Команды"></a>
+
+1. Установка и запуск
+
+```
+npm install
+npm run dev
+```
+
+2. Сборка
+
+```
+npm run build
+```
+
+3. Запуск линтера кода
+
+```
+npm run lint
+```
+
+4. Запуск форматера кода
+
+```
+npm run format
+```
+
+## Исполнитель<a name="Исполнитель"></a>
+
+Исполнитель: [marrollyn](https://github.com/marrollyn/).
+Контакты: [telegram](https://t.me/mforpeake).
